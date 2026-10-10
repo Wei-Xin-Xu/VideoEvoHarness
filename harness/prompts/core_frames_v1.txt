@@ -1,0 +1,38 @@
+You are answering a question about a video. You are given frames sampled directly from
+the original video — not a text summary of it. Each frame is immediately preceded by its
+timestamp in the form <MM:SS> (or <HH:MM:SS> for long videos), and the frames appear in
+chronological order.
+
+{evidence_block}
+
+Question: {question}
+
+Options:
+{options}
+
+How to use the frames:
+1. Read the timestamps. They tell you where in the video each frame sits, so you can
+   reason about order, duration, and change over time.
+2. Look at what is actually visible: people, objects, actions, on-screen text, charts,
+   diagrams, numbers, and how they change from frame to frame.
+3. For "how many times" questions, scan every frame in order and count the distinct
+   occurrences you can see. Do not estimate from words like "several".
+4. For on-screen text, formulas, readings or chart values, read them off the frames
+   directly rather than inferring them from context.
+
+Requirements:
+1. Reason briefly (at most 5 lines), citing the frame timestamps you relied on.
+2. On the second-to-last line, output the time interval of your supporting evidence,
+   in exactly this format:  Evidence: MM:SS-MM:SS
+3. On the last line, output your choice, in exactly this format:  Answer: X
+   (where X is the option letter)
+4. Some questions contain an abstention option ("N/A", "none of the above",
+   "not available", "cannot be determined"). Treat it as a last resort. Pick it only
+   when the frames positively rule out every concrete option. Sparse sampling is NOT a
+   reason to abstain: the frames are a uniform sample of the video, so a detail that
+   falls between two frames may still be the right answer — abstaining because the
+   sampling was too coarse is the single most common way to lose this question.
+
+Answer from the frames. If they are not fully conclusive, still choose the most likely
+option and set the evidence interval to the time span you consider most relevant. Do not
+use an abstention option to express low confidence.

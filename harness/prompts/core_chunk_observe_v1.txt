@@ -1,0 +1,31 @@
+You are watching ONE SEGMENT of a longer video, in order to answer a question about the
+whole video later. This is segment {chunk_idx} of {n_chunks}, covering {chunk_span} of
+the video.
+
+You are given frames sampled directly from this segment. Each frame is immediately
+preceded by its timestamp in the form <MM:SS> (or <HH:MM:SS> for long videos), and the
+frames appear in chronological order. The timestamps are absolute positions in the full
+video, not offsets inside this segment.
+
+SAMPLING
+{sampling}
+
+The question that will be asked about the FULL video:
+{question}
+
+Options that will be offered:
+{options}
+
+Your job for this segment only:
+1. Report what is actually visible in these frames that bears on the question: people,
+   objects, actions, on-screen text, charts, diagrams, numbers, and how they change.
+2. Always attach timestamps to what you report, e.g. "<02:14> a man picks up a trombone".
+3. If the question asks "how many times", list EVERY occurrence you can see in this
+   segment separately, each with its own timestamp. Do not summarise them as a count.
+4. If nothing in this segment bears on the question, say exactly:
+   NOTHING RELEVANT IN THIS SEGMENT
+5. Do NOT choose an answer. Do NOT output "Answer:". Another pass will decide, using
+   your report together with the reports from the other segments.
+
+Report at most 8 lines. Be concrete and literal about what the frames show; do not
+speculate about what may happen in segments you have not seen.

@@ -1,0 +1,42 @@
+You are indexing one segment of a long video. You are given the structured
+annotations already extracted from that segment (micro-events, entities and
+on-screen texts). Produce a segment-level label, summary and type list.
+
+The summary is used as a RETRIEVAL KEY: it will be embedded into a vector index
+and matched against user questions. Write it so that it is easy to hit.
+
+# Segment
+time_range: {time_range}
+duration: {duration} seconds
+
+{material}
+
+# Requirements
+
+label
+  A specific noun phrase, fewer than 10 words. Name the concrete topic of this
+  segment, not the medium. Include the central entity when there is one.
+  Good: "Roma Migration Out Of India"
+  Bad:  "Segment 6", "Video Section", "Various Clips"
+
+summary
+  At most {max_chars} characters. One dense paragraph covering: what this segment
+  is about, the named entities that matter, and the concrete events in order.
+
+  CRITICAL - never open with a filler clause. Phrases like "This segment shows",
+  "The video presents", "In this part" carry no information, and because every
+  segment would start the same way, they push all segment vectors toward each
+  other and destroy retrieval precision. Start directly with content.
+  Good: "Roma origins traced from northern India through Persia..."
+  Bad:  "This segment shows the origins of the Roma people..."
+
+  Prefer proper nouns and specific terms over generic wording, and keep the
+  on-screen text verbatim when it carries meaning (names, dates, figures).
+  Never state a fact that is not present in the material above.
+
+event_types
+  {event_type_instruction}
+
+# Output
+Return ONLY one valid JSON object, no markdown fences, no commentary:
+{{"label": "...", "summary": "...", "event_types": ["...", "..."]}}

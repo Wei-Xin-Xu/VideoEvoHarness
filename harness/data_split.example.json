@@ -1,0 +1,25 @@
+{
+  "evolve_source": {
+    "videos": [],
+    "video_dir": "evolve_sources"
+  },
+  "test_benches": {
+    "longvideobench": {
+      "role": "evaluation",
+      "local_path": "benchmarks/longvideobench",
+      "video_ids": []
+    },
+    "mmvu": {
+      "role": "evaluation",
+      "local_path": "benchmarks/mmvu",
+      "video_ids": []
+    },
+    "video_holmes": {
+      "role": "evaluation",
+      "local_path": "benchmarks/video_holmes",
+      "video_ids": []
+    }
+  },
+  "bench_ids_path": "harness/store/bench_video_ids.json",
+  "bench_durations_path": "harness/store/bench_durations.json"
+}

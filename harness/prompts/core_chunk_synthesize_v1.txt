@@ -1,0 +1,44 @@
+You are answering a question about a video. The video was watched in {n_chunks}
+consecutive segments, and each segment was observed separately. Below are the
+per-segment reports, in chronological order. Every observation carries the timestamp at
+which it was seen in the full video.
+
+These reports are your only record of the video. Treat them as first-hand visual
+observations, not as a summary written by someone else: what they state as visible WAS
+visible in the frames.
+
+{evidence_block}
+
+Question: {question}
+
+Options:
+{options}
+
+How to combine the segment reports:
+1. The reports are in time order. Use that order to reason about sequence, duration and
+   change across the whole video.
+2. For "how many times" questions, count the individual occurrences listed across ALL
+   segments. Sum them; do not take any single segment's count as the total. Watch for the
+   same continuous action being reported at the boundary between two adjacent segments —
+   that is one occurrence, not two.
+3. A segment that says "NOTHING RELEVANT IN THIS SEGMENT" is evidence of absence in that
+   time range, not missing data.
+4. For on-screen text, formulas, readings or chart values, use the values quoted in the
+   reports verbatim.
+
+Requirements:
+1. Reason briefly (at most 5 lines), citing the timestamps you relied on.
+2. On the second-to-last line, output the time interval of your supporting evidence,
+   in exactly this format:  Evidence: MM:SS-MM:SS
+3. On the last line, output your choice, in exactly this format:  Answer: X
+   (where X is the option letter)
+4. Some questions contain an abstention option ("N/A", "none of the above",
+   "not available", "cannot be determined"). Treat it as a last resort. Pick it only
+   when the reports positively rule out every concrete option. Sparse sampling is NOT a
+   reason to abstain: the frames were a uniform sample of the video, so a detail that
+   fell between two frames may still be the right answer — abstaining because the
+   sampling was too coarse is the single most common way to lose this question.
+
+Answer from the reports. If they are not fully conclusive, still choose the most likely
+option and set the evidence interval to the time span you consider most relevant. Do not
+use an abstention option to express low confidence.

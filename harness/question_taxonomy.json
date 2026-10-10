@@ -1,0 +1,166 @@
+{
+  "types": {
+    "object_reasoning": {
+      "videomme_task_type": "Object Reasoning",
+      "cgbench_class": "reasoning",
+      "weight_long": 0.267,
+      "weight_gen": 0.24,
+      "source_fields": [
+        "entities",
+        "edges",
+        "micro_events"
+      ],
+      "templates": [
+        "According to the video, which of the following appears in the same segment as {entity}?",
+        "According to the video, which of the following is seen together with {entity}?"
+      ]
+    },
+    "action_reasoning": {
+      "videomme_task_type": "Action Reasoning",
+      "cgbench_class": "reasoning",
+      "weight_long": 0.2,
+      "weight_gen": 0.06,
+      "source_fields": [
+        "edges",
+        "micro_events"
+      ],
+      "templates": [
+        "According to the video, what is the causal relationship associated with the following event?\nEvent: {event}",
+        "According to the video, what does the following event lead to?\nEvent: {event}",
+        "Based on the video, what causes the following event?\nEvent: {event}"
+      ]
+    },
+    "info_synopsis": {
+      "videomme_task_type": "Information Synopsis",
+      "cgbench_class": "perception",
+      "weight_long": 0.181,
+      "weight_gen": 0.1,
+      "source_fields": [
+        "root",
+        "super_events",
+        "macro_summary"
+      ],
+      "templates": [
+        "Which of the following segments covers all of the following elements: {a1}, {a2}, and {a3}?",
+        "What is the video mainly about?"
+      ]
+    },
+    "temporal_reasoning": {
+      "videomme_task_type": "Temporal Reasoning",
+      "cgbench_class": "reasoning",
+      "weight_long": 0.101,
+      "weight_gen": 0.12,
+      "source_fields": [
+        "micro_events"
+      ],
+      "templates": [
+        "According to the video, what happens right after the following event?\nEvent: {event}",
+        "According to the video, which of the following events occurs first?",
+        "In the video, what does {subject} do before {action}?"
+      ],
+      "templates_micro": [
+        "According to the video, what happens right after the following event?\nEvent: {event}",
+        "According to the video, what happens right before the following event?\nEvent: {event}"
+      ]
+    },
+    "action_recognition": {
+      "videomme_task_type": "Action Recognition",
+      "cgbench_class": "perception",
+      "weight_long": 0.07,
+      "weight_gen": 0.04,
+      "source_fields": [
+        "micro_events"
+      ],
+      "templates": [
+        "In the segment from {t0} to {t1}, what does {subject} do?",
+        "According to the video, which of the following actions is performed by {subject}?"
+      ]
+    },
+    "object_recognition": {
+      "videomme_task_type": "Object Recognition",
+      "cgbench_class": "perception",
+      "weight_long": 0.06,
+      "weight_gen": 0.12,
+      "source_fields": [
+        "entities"
+      ],
+      "templates": [
+        "Which of the following appears in the segment from {t0} to {t1}?",
+        "In the segment from {t0} to {t1}, which of the following objects can be seen?"
+      ]
+    },
+    "counting": {
+      "videomme_task_type": "Counting Problem",
+      "cgbench_class": "perception",
+      "weight_long": 0.053,
+      "weight_gen": 0.18,
+      "source_fields": [
+        "entities",
+        "micro_events"
+      ],
+      "templates": [
+        "How many distinct {category} appear in the segment from {t0} to {t1}?",
+        "In the segment from {t0} to {t1}, how many times does the following type of event occur?\nEvent type: {event_type}"
+      ]
+    },
+    "attribute_perception": {
+      "videomme_task_type": "Attribute Perception",
+      "cgbench_class": "perception",
+      "weight_long": 0.03,
+      "weight_gen": 0.0,
+      "source_fields": [
+        "entities"
+      ],
+      "templates": [
+        "According to the video, what does {entity} look like?",
+        "Which of the following correctly describes {entity} in the video?"
+      ]
+    },
+    "ocr": {
+      "videomme_task_type": "OCR Problems",
+      "cgbench_class": "perception",
+      "weight_long": 0.016,
+      "weight_gen": 0.14,
+      "source_fields": [
+        "on_screen_texts"
+      ],
+      "templates": [
+        "According to the video, what text is shown on screen around {t0}?"
+      ]
+    },
+    "spatial": {
+      "videomme_task_type": "Spatial Reasoning",
+      "cgbench_class": "reasoning",
+      "weight_long": 0.015,
+      "weight_gen": 0.0,
+      "source_fields": [
+        "entities",
+        "edges"
+      ],
+      "templates": [
+        "According to the video, where is {entity} located?",
+        "In the video, what is the spatial relationship described for {entity}?"
+      ]
+    },
+    "hallucination": {
+      "videomme_task_type": "Attribute Perception (negative form)",
+      "cgbench_class": "hallucination",
+      "weight_long": 0.007,
+      "weight_gen": 0.0,
+      "source_fields": [
+        "micro_events",
+        "entities",
+        "on_screen_texts"
+      ],
+      "templates": [
+        "Which of the following statements is not correct according to the video?",
+        "According to the video, which of the following statements is false?"
+      ]
+    }
+  },
+  "distractor_policy": {
+    "prefer_adjacent_macros": true,
+    "adjacent_window": 2,
+    "fallback_to_random": true
+  }
+}

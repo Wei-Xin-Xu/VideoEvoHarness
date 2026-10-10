@@ -1,0 +1,75 @@
+You are solving a multiple-choice question about a long video. You cannot see the video
+yet. A first retrieval pass over the graph memory has already run; its result is below.
+
+Your job in this step is ONLY to LOCATE. Do not answer the question yet.
+Decide whether the initial retrieval is good enough, query the memory yourself if it is
+not, and then name the exact segment(s) and seconds that should be looked at.
+
+# Memory layout
+root (whole video) -> super_events (narrative arcs) -> macro_events (segments)
+-> subgraph (micro-events, entities, on-screen texts, relations)
+
+Coarse layers say what a segment is ABOUT. Only a subgraph holds concrete facts.
+
+# Tools available to you
+{tool_list}
+
+# Question
+{question}
+
+Options:
+{options}
+
+# What the initial retrieval already found
+Candidate segments: {candidates}
+
+{retrieved}
+
+# Your tool calls so far (round {round} of {max_rounds})
+{observations}
+
+# What to output now
+Output EXACTLY ONE of the following three things. Never two of them in one reply.
+
+**Put the TOOL: / SELECT: / DONE line FIRST, before any explanation.** Your reply is
+length-limited; if you reason at length first, the line gets cut off and the whole round
+is wasted. One short sentence of justification AFTER the line is enough.
+
+1. Call one tool:
+TOOL: {{"name": "<tool_name>", "args": {{...}}}}
+
+2. Name the candidates you want looked at (you may also do this in the same reply as
+   DONE, see below):
+SELECT: {{"candidates": [{{"macro_id": "macro_0007", "start_sec": 412, "end_sec": 448}}],
+ "why": "one short sentence"}}
+
+3. Finish this step:
+DONE
+   or, finishing and selecting at the same time:
+DONE: {{"candidates": [{{"macro_id": "macro_0007", "start_sec": 412, "end_sec": 448}}],
+ "why": "one short sentence"}}
+
+# Rules that matter
+- You may pick at most {max_selected} candidate(s). Fewer is fine.
+- **You have {rounds_left} tool round(s) left. On your LAST round you MUST output
+  SELECT or DONE with candidates.** If you spend every round calling tools and never
+  select, this whole step is wasted: the answer step falls back to the initial
+  retrieval candidates and none of your tool results affect which frames get read.
+- Prefer to SELECT as soon as you know where to look. Calling one more tool "just to be
+  sure" costs a round; selecting a slightly imperfect segment still beats selecting
+  nothing.
+- Every `macro_id` you select MUST have appeared either in "Candidate segments" above or
+  in one of your own tool results. Never invent an id.
+- `start_sec` / `end_sec` are the seconds INSIDE that segment that actually matter. Give
+  them whenever you know them: a segment can be several minutes long, and naming the
+  precise seconds is the difference between looking at the right moment and looking at
+  the wrong one. If you do not know them, omit them and the segment's own time range
+  will be used.
+- If your tool results show the retrieval simply missed the target (nothing matches the
+  question), say so with DONE and select whatever is closest -- the frames still get
+  read, and a rough location beats no location.
+- Do NOT try to read video frames here. Frames are read after this step, using exactly
+  the time ranges you select.
+- Semantic tools (search_nodes, search_ocr_text, enumerate_events) need the embedding
+  service. If one reports that it degraded to BM25, prefer a graph tool
+  (search_by_time, get_macro_events, get_subgraph) -- those need no embedding at all.

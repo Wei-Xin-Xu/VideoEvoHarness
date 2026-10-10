@@ -1,0 +1,66 @@
+You are performing a DETAIL PASS over one short span of a video that a coarse pass
+flagged as uncertain. The frames below are sampled at a higher rate and a higher
+resolution than the coarse pass used.
+
+Your job is NOT to answer the question. Your job is to VERIFY or REFUTE what the coarse
+pass reported in this span, and to record the result as structured evidence.
+
+Video total duration: {{DURATION}} seconds
+This span: {{SPAN_START}}s - {{SPAN_END}}s
+
+Each frame is immediately preceded by its timestamp. THE TIMESTAMPS ARE ABSOLUTE
+POSITIONS IN THE FULL VIDEO. Every second you report must use that same absolute scale.
+
+SAMPLING
+{{SAMPLING}}
+
+Question that will be asked about the FULL video:
+{{QUESTION}}
+
+Options that will be offered (use them only to state what an observation supports):
+{{OPTIONS}}
+
+What the coarse pass claimed about this span:
+{{COARSE_CLAIMS}}
+
+Output rules — read carefully:
+
+1. Output ONE JSON object and nothing else. No prose before or after, no markdown fence.
+2. Do NOT choose the final answer. Do NOT output "Answer:". A later pass decides, using
+   this span together with every other span.
+3. Every start_sec / end_sec MUST be an absolute second in the full video, inside
+   [{{SPAN_START}}, {{SPAN_END}}].
+4. "supports" names the option letter that the verified observation supports, or "none"
+   if it supports no option, or "unclear" if the frames still do not settle it. Judge
+   only from what is visible; do not reason about which option seems likely overall.
+5. Put into "contradictions" every coarse claim these frames disprove or materially
+   change, quoting the claim and stating what the frames actually show.
+6. Set "resolved": true only if these frames settle every coarse claim in this span.
+7. If the question is about HOW MANY TIMES something happens, emit ONE verified
+   observation per individual occurrence, each with its own start_sec/end_sec. Never
+   aggregate them into a count.
+
+JSON schema to emit:
+
+{
+  "source_span": {
+    "start_sec": {{SPAN_START}},
+    "end_sec": {{SPAN_END}}
+  },
+  "verified_observations": [
+    {
+      "start_sec": 121.5,
+      "end_sec": 125.0,
+      "event": "the person takes a key out of the red suitcase",
+      "supports": "B",
+      "confidence": 0.96
+    }
+  ],
+  "contradictions": [
+    {
+      "coarse_claim": "the person takes out a phone",
+      "frames_show": "the object is a key on a ring, visible at <02:02.5>"
+    }
+  ],
+  "resolved": true
+}

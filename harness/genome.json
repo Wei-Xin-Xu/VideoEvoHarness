@@ -1,0 +1,335 @@
+{
+  "version": 2,
+  "parent_version": 1,
+  "note": "",
+  "memory": {
+    "macro_summary": {
+      "enabled": true,
+      "prompt_file": "prompts/macro_summary_v1.txt",
+      "max_chars": 400,
+      "max_material_chars": 24000,
+      "response_max_tokens": 800,
+      "include": [
+        "events",
+        "entities",
+        "ocr"
+      ],
+      "event_type_vocab": "closed",
+      "index_macro_nodes": true,
+      "index_super_nodes": false
+    },
+    "patch": {
+      "enabled": true,
+      "trigger": "density",
+      "min_events_per_min": 5.0,
+      "patch_fps": 2.0,
+      "max_frames_per_patch": 60,
+      "max_dim": 1024,
+      "dedup_cosine": 0.88,
+      "max_patches_per_round": 2,
+      "use_question_text": false,
+      "min_gap_sec": 8.0,
+      "max_gaps_per_round": 2
+    }
+  },
+  "retrieval": {
+    "topk_macro": 2,
+    "search_multiplier": 3,
+    "entries": [
+      "macro",
+      "nodes"
+    ],
+    "node_types": null,
+    "enumerate_min_cosine": 0.35,
+    "rerank": false,
+    "adaptive_topk": {
+      "enabled": false,
+      "max_multiplier": 2,
+      "keep_ratio": 0.85
+    },
+    "use_learned_strategy": false,
+    "strategy_max_cosine": 0.5
+  },
+  "evidence": {
+    "max_chars": 6000,
+    "max_events": 999,
+    "max_entities": 8,
+    "max_ocr": 999,
+    "order": [
+      "events",
+      "entities",
+      "ocr"
+    ],
+    "include_summary": true,
+    "summary_budget_share": 0.35,
+    "include_neighbor_macro": false,
+    "primary_only": 0,
+    "dedup": false,
+    "frames": {
+      "enabled": false,
+      "route_max_min": 0.0,
+      "route_max_cosine": 0.5,
+      "fps": 1.0,
+      "chunk_sec": 300.0,
+      "max_chunks": 0,
+      "max_dim": 512,
+      "no_media_info": false
+    }
+  },
+  "answer": {
+    "mode": "pipeline",
+    "prompt_file": "prompts/solve_v1.txt",
+    "agent_prompt_file": "prompts/agent_policy_v1.txt",
+    "max_tokens": 2048,
+    "temperature": 0.1,
+    "require_anchor": true
+  },
+  "routing": {
+    "max_direct_sec": 300.0,
+    "max_chunked_sec": 1800.0
+  },
+  "policy": {
+    "tools_enabled": {
+      "search_nodes": true,
+      "get_subgraph": true,
+      "search_ocr_text": true,
+      "enumerate_events": true,
+      "search_by_time": true,
+      "get_summary": true,
+      "get_super_events": true,
+      "get_macro_events": true,
+      "search_asr_text": false,
+      "read_video": true
+    },
+    "rules": [
+      {
+        "id": "r_route_time",
+        "kind": "routing",
+        "applies_to": [],
+        "text": "If the question names a timestamp or a time range, call search_by_time first.",
+        "added_at": 1,
+        "wins": 0,
+        "trials": 0
+      },
+      {
+        "id": "r_route_text",
+        "kind": "routing",
+        "applies_to": [
+          "ocr_text",
+          "ocr"
+        ],
+        "text": "If the question asks about on-screen text, captions, numbers or scores, call search_ocr_text first.",
+        "added_at": 1,
+        "wins": 0,
+        "trials": 0
+      },
+      {
+        "id": "r_route_coarse",
+        "kind": "routing",
+        "applies_to": [],
+        "text": "Otherwise call search_nodes with node_types=[\"macro\"] to locate the segment, then get_subgraph on the best macro_id.",
+        "added_at": 1,
+        "wins": 0,
+        "trials": 0,
+        "protected": true
+      },
+      {
+        "id": "r_anti_summary",
+        "kind": "anti_pattern",
+        "applies_to": [],
+        "text": "Never answer from a segment summary alone. Call get_subgraph and answer from the concrete event, entity and on-screen-text lines.",
+        "added_at": 1,
+        "wins": 0,
+        "trials": 0
+      },
+      {
+        "id": "r_anti_repeat",
+        "kind": "anti_pattern",
+        "applies_to": [],
+        "text": "Never repeat a search with a slightly reworded query. If a macro_id was already found, drill into it instead.",
+        "added_at": 1,
+        "wins": 0,
+        "trials": 0
+      },
+      {
+        "id": "r_anti_count",
+        "kind": "anti_pattern",
+        "applies_to": [
+          "count_entity",
+          "counting"
+        ],
+        "text": "For counting, count the node list from get_subgraph, then verify with read_video on the same window before answering; never estimate from words like several.",
+        "added_at": 1,
+        "wins": 0,
+        "trials": 0
+      },
+      {
+        "id": "r_route_count_frames",
+        "kind": "routing",
+        "applies_to": [
+          "counting",
+          "count_entity"
+        ],
+        "text": "For counting questions, get_subgraph first, then call read_video on that exact time range and count from the frames; the memory record may have missed occurrences.",
+        "added_at": 1,
+        "wins": 0,
+        "trials": 0
+      }
+    ],
+    "inject": {
+      "max_rules_per_call": 5,
+      "max_chars_per_call": 900,
+      "select_by": "question_type",
+      "always_include_kinds": [
+        "anti_pattern"
+      ]
+    },
+    "dedup": {
+      "enabled": true,
+      "max_cosine": 0.78,
+      "compare_within_kind_only": true,
+      "on_duplicate": "reject"
+    },
+    "limits": {
+      "max_library_rules": 500,
+      "max_rule_chars": 200,
+      "max_library_chars": 100000,
+      "max_obs_chars_per_round": 2500,
+      "obs_window": 2,
+      "retire_after_idle_rounds": 3
+    },
+    "read_video": {
+      "enabled": true,
+      "backend": "core",
+      "max_calls_per_question": 1,
+      "max_frames_per_call": 192,
+      "max_window_sec": 60,
+      "node_window_pad_sec": 24.0,
+      "node_window": true,
+      "fps": 1.0,
+      "max_dim": 768,
+      "second_look": false,
+      "require_narrowed_window": true,
+      "max_segments": 3,
+      "focus_weight": 3.0,
+      "require_replay_on_retrieve": true,
+      "max_frames_total": 0,
+      "second_look_overlap_reject": 0.8
+    },
+    "memory_tools": {
+      "enabled": true,
+      "max_rounds": 3,
+      "max_selected": 3,
+      "max_candidates_after_merge": 8,
+      "selection_drives_replay": true,
+      "max_obs_chars": 1200,
+      "obs_window": 2,
+      "max_parse_errors": 2,
+      "max_tokens": 3000,
+      "temperature": 0.0,
+      "on_embedding_failure": "record_and_continue",
+      "allow_learned_tools": true,
+      "learned_tool_timeout_sec": 20.0,
+      "max_returned_recorded": 40,
+      "prompt_file": "prompts/pipeline_tools_v1.txt"
+    }
+  },
+  "budget": {
+    "max_tool_rounds": 6,
+    "per_type_rounds": {}
+  },
+  "questioner": {
+    "use_asr": false,
+    "min_gap_sec": 15.0,
+    "n_options": 4,
+    "option_len_tolerance": 0.35,
+    "max_lexical_overlap_diff": 0.5,
+    "per_macro_max": 6,
+    "tries": 3,
+    "distractor": {
+      "prefer_adjacent_macros": true,
+      "adjacent_window": 2,
+      "same_type_only": true,
+      "fallback_to_random": true
+    },
+    "option_text": {
+      "max_len": 180,
+      "min_len_default": 8
+    },
+    "form": {
+      "object_reasoning": "cooccurrence",
+      "info_synopsis": "both",
+      "attribute_perception": "attributes"
+    },
+    "type_enabled": {
+      "object_reasoning": true,
+      "action_reasoning": false,
+      "info_synopsis": true,
+      "temporal_reasoning": true,
+      "action_recognition": true,
+      "object_recognition": true,
+      "counting": true,
+      "attribute_perception": true,
+      "ocr": true,
+      "spatial": true,
+      "hallucination": true
+    },
+    "type_weight_override": {}
+  },
+  "questioner_objective": {
+    "blind_target": 0.25,
+    "oracle_target": 1.0,
+    "zpd_range": [
+      0.3,
+      0.7
+    ],
+    "weights": {
+      "blind": 2.0,
+      "oracle": 1.0,
+      "reject": 0.5,
+      "distribution": 1.0,
+      "zpd": 1.0
+    }
+  },
+  "verifier": {
+    "blind_max_score": 0.34,
+    "oracle_min_score": 0.99,
+    "oracle_samples": 1,
+    "skip_for_structural": true
+  },
+  "split": {
+    "evolve_ratio": 0.7,
+    "seed": 42
+  },
+  "capabilities": {
+    "hyperparam": "llm",
+    "skill": "llm",
+    "tool_policy": "llm",
+    "strategy_code": "llm",
+    "tool_code": "llm",
+    "questioner": "rule"
+  },
+  "gates": {
+    "paired_bootstrap": {
+      "mode": "full"
+    },
+    "baseline_drift": {
+      "mode": "full"
+    },
+    "frame_budget": {
+      "mode": "full"
+    },
+    "macro_budget": {
+      "mode": "full"
+    },
+    "strategy_gate5": {
+      "mode": "full"
+    },
+    "tool_gate5": {
+      "mode": "full"
+    },
+    "ast_whitelist": {
+      "mode": "full"
+    }
+  }
+}

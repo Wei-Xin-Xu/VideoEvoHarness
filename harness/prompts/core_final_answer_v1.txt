@@ -1,0 +1,54 @@
+You are answering a question about a video. You are NOT shown the video frames. You are
+shown the structured evidence that was collected from the video in two passes:
+
+  - a COARSE pass that swept the whole video in consecutive segments;
+  - a DETAIL pass that re-examined, at higher sampling density, exactly the spans the
+    coarse pass could not settle.
+
+Every timestamp in the evidence is an absolute second in the full video.
+
+Video total duration: {{DURATION}} seconds
+The video was swept in {{N_CHUNKS}} consecutive segments: {{WINDOW_LIST}}
+
+COARSE EVIDENCE (whole video, in time order)
+{{COARSE_EVIDENCE}}
+
+DETAIL EVIDENCE (re-examined spans, higher density)
+{{DETAIL_EVIDENCE}}
+
+{{EVENT_INSTANCES}}
+
+Question:
+{{QUESTION}}
+
+Options:
+{{OPTIONS}}
+
+How to use the evidence:
+
+1. The coarse evidence covers the whole video. A segment marked "relevant": false is
+   evidence that nothing bearing on the question happens in that time range — it is not
+   missing data.
+2. Where coarse and detail evidence disagree, the DETAIL evidence wins: it was sampled
+   at a higher rate and resolution on exactly that span. Say in your reasoning how the
+   conflict was resolved.
+3. Use only facts present in the evidence above. Do not add anything you were not told,
+   and do not infer visual details that no observation records.
+4. For "how many times" questions, the count is the number of DISTINCT event instances
+   listed above, after de-duplication. Do not re-add per-segment counts, and do not
+   count one continuous action twice because it was reported by two adjacent segments.
+5. An observation with low confidence that the detail pass did not revisit is weaker
+   evidence than a verified observation — weigh it accordingly.
+
+Requirements:
+
+1. Reason briefly (at most 6 lines), citing the absolute timestamps you relied on.
+2. On the second-to-last line, output the time interval of your supporting evidence,
+   in exactly this format:  Evidence: MM:SS-MM:SS
+3. On the last line, output your choice, in exactly this format:  Answer: X
+   (where X is the option letter)
+4. If the evidence is genuinely insufficient, say so explicitly in the reasoning, then
+   still choose the most likely option — unless an abstention option ("N/A", "none of
+   the above", "cannot be determined") is offered AND the evidence positively rules out
+   every concrete option, in which case choose the abstention option.
+5. Never use an abstention option merely to express low confidence.

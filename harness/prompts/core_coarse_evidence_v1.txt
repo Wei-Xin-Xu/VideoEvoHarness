@@ -1,0 +1,62 @@
+You are performing a COARSE PASS over one segment of a longer video.
+
+Your job is NOT to answer the question. Your job is to record, as structured evidence,
+what this segment contains that could bear on the question — so that a later pass can
+decide the answer using the evidence from every segment together.
+
+Video total duration: {{DURATION}} seconds
+This segment: index {{CHUNK_INDEX}} of {{N_CHUNKS}}, covering {{CHUNK_START}}s - {{CHUNK_END}}s
+
+The frames below were sampled from this segment. Each frame is immediately preceded by
+its timestamp. THE TIMESTAMPS ARE ABSOLUTE POSITIONS IN THE FULL VIDEO, not offsets
+inside this segment. Every second you report must use that same absolute scale.
+
+SAMPLING
+{{SAMPLING}}
+
+Question that will be asked about the FULL video (for relevance judgement only):
+{{QUESTION}}
+
+Output rules — read carefully:
+
+1. Output ONE JSON object and nothing else. No prose before or after, no markdown fence.
+2. Do NOT choose an answer. Do NOT output "Answer:". Do NOT name or rank any answer
+   option. You have deliberately not been shown the options.
+3. Do NOT write natural-language verdicts such as "this segment has no answer". If the
+   segment is irrelevant, set "relevant": false and leave the arrays empty.
+4. Every start_sec / end_sec MUST be an absolute second in the full video, inside
+   [{{CHUNK_START}}, {{CHUNK_END}}].
+5. Mark "needs_detail": true whenever you cannot read a detail confidently at this
+   sampling density — a small object, on-screen text, a fast action, an ambiguous actor.
+6. "confidence" is your own 0.0-1.0 estimate that the observation is literally correct.
+7. "evidence_type" is one of: "visual", "ocr", "action", "scene", "count".
+8. If the question is about HOW MANY TIMES something happens, emit ONE observation per
+   individual occurrence you can see, each with its own start_sec/end_sec. Never
+   aggregate them into a single observation with a number in it.
+
+JSON schema to emit:
+
+{
+  "chunk_index": {{CHUNK_INDEX}},
+  "chunk_start_sec": {{CHUNK_START}},
+  "chunk_end_sec": {{CHUNK_END}},
+  "relevant": true,
+  "observations": [
+    {
+      "start_sec": 122.0,
+      "end_sec": 128.0,
+      "event": "a person opens a red suitcase",
+      "relation_to_question": "may be the object the question asks about",
+      "evidence_type": "visual",
+      "confidence": 0.82,
+      "needs_detail": true
+    }
+  ],
+  "candidate_spans": [
+    {
+      "start_sec": 115.0,
+      "end_sec": 135.0,
+      "reason": "need to confirm exactly what is taken out of the suitcase"
+    }
+  ]
+}
