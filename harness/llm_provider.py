@@ -18,18 +18,6 @@ PROVIDERS: dict[str, dict] = {
         "err_too_large": ("exceed max message tokens", "Request Entity Too Large"),
         "verified": True,
     },
-    "doubao": {
-        "model": "doubao-seed-2-0-pro-260215",
-        "tokens_key": "max_completion_tokens",
-        "thinking_off": ("extra_body", "thinking", {"type": "disabled"}),
-        "thinking_on": ("extra_body", "thinking", {"type": "enabled"}),
-        "max_frames": 144,
-        "auth_suffix": "?provider=doubao",
-        "err_content": ("DataInspectionFailed", "UpstreamContentFilter",
-                        "inappropriate content"),
-        "err_too_large": ("exceed max message tokens", "Request Entity Too Large"),
-        "verified": True,
-    },
     "gemini": {
         "model": "gemini-3.8-flash",
         "tokens_key": "max_tokens",

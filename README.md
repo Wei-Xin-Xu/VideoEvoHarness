@@ -63,7 +63,7 @@ Fill in `qwen-mm-config`:
 | `DASHSCOPE_BASE_URL` | API root, without `/chat/completions` |
 | `DASHSCOPE_API_KEY` | API key |
 | `QWEN_MM_API_VL_MODEL` | Model name |
-| `LLM_PROVIDER` | `qwen`, `gemini` or `doubao` |
+| `LLM_PROVIDER` | `qwen` or `gemini` |
 
 Follow the [embedding service instructions](embedding_server/README.md) to
 configure Qwen3-Embedding-8B and your upstream model endpoint, then start the
